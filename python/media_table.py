@@ -5,7 +5,7 @@ from sqlalchemy.orm import declarative_base
 
 
 Base = declarative_base()
-
+table_names = dict()
 
 class Media(Base):
     """Base media table."""
@@ -16,10 +16,12 @@ class Media(Base):
     creator = Column(String(32))
     release_date = Column(Date)
     description = Column(Text)
+    type = Column(String(50))
 
-    def __init__(self, title, creator=None, release_date=None, description=None):
-        """Create a record."""
-        self.title = title
-        self.creator = creator
-        self.release_date = release_date
-        self.description = description
+    __mapper_args__ = {
+        'polymorphic_identity': 'media',
+        'polymorphic_on': type
+    }
+
+    def __repr__(self):
+        return f"{self.__tablename__}(id={self.id}, title={self.title}, creator={self.creator}, release date={self.release_date}, description={self.description})"
